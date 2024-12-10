@@ -10,11 +10,15 @@ on:
   pull_request:
     branches:
       - main
-  workflow_dispatch:
+  workflow_dispatch:  # Allows manual trigger
 
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    env:  # Injecting secrets as environment variables
+      SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
+      SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
 
     steps:
     - name: Checkout repository
@@ -27,18 +31,18 @@ jobs:
 
     - name: Install dependencies
       run: |
-        cd ./webdriverio/appium-app/best-practices
+        cd ./webdriverio/appium-app/bestpractices
         npm install
 
     - name: Run WebDriverIO tests on Saucelabs
       run: |
-        cd ./webdriverio/appium-app/best-practices
+        cd ./webdriverio/appium-app/bestpractices
         npm run test.saucelabs.android.rdc.us
 
     - name: Upload test results to Sauce Labs (optional)
       if: always()
       run: |
         # Example of how to upload results or logs to Sauce Labs (optional step)
-        curl -u ${{ secrets.SAUCE_USERNAME }}:${{ secrets.SAUCE_ACCESS_KEY }} \
+        curl -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY \
           https://saucelabs.com/rest/v1/storage/your-identifier/test-results.zip \
           --data-binary @test-results.zip
