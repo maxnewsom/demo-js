@@ -31,12 +31,12 @@ jobs:
 
     - name: Install dependencies
       run: |
-        cd ./webdriverio/appium-app/bestpractices
+        cd ./webdriverio/appium-app/best-practices
         npm install
 
     - name: Run WebDriverIO tests on Saucelabs
       run: |
-        cd ./webdriverio/appium-app/bestpractices
+        cd ./webdriverio/appium-app/best-practices
         npm run test.saucelabs.android.rdc.us
 
     - name: Upload test results to Sauce Labs (optional)
