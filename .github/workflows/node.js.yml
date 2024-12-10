@@ -1,0 +1,44 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: WebDriverIO Tests on Saucelabs
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'  # You can specify the Node.js version you'd like
+
+    - name: Install dependencies
+      run: |
+        cd ./webdriverio/appium-app/best-practices
+        npm install
+
+    - name: Run WebDriverIO tests on Saucelabs
+      run: |
+        cd ./webdriverio/appium-app/best-practices
+        npm run test.saucelabs.android.rdc.us
+
+    - name: Upload test results to Sauce Labs (optional)
+      if: always()
+      run: |
+        # Example of how to upload results or logs to Sauce Labs (optional step)
+        curl -u ${{ secrets.SAUCE_USERNAME }}:${{ secrets.SAUCE_ACCESS_KEY }} \
+          https://saucelabs.com/rest/v1/storage/your-identifier/test-results.zip \
+          --data-binary @test-results.zip
