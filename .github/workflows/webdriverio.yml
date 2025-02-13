@@ -1,0 +1,40 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: WebDriverIO Tests on Saucelabs
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    env:  # Injecting secrets as environment variables
+      SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
+      SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'  # You can specify the Node.js version you'd like
+
+    - name: Install dependencies
+      run: |
+        cd ./webdriverio/webdriver/best-practices
+        npm install
+
+    - name: Run WebDriverIO tests on Saucelabs
+      run: |
+        cd ./webdriverio/webdriver/best-practices
+        npm run test.saucelabs.us
